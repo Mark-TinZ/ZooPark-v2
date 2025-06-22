@@ -1,8 +1,8 @@
-#include "imgui.h"
+#include "view/ImGuiTheme.h"
 
-void StyleClassicSteam()
+void ImGuiTheme::StyleClassicSteam()
 {
-	// Classic Steam style by metasprite from ImThemes
+    // Classic Steam style by metasprite from ImThemes
 	ImGuiStyle* style = &ImGui::GetStyle();
 	ImVec4* colors = style->Colors;
 	

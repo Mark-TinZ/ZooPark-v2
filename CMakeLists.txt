@@ -12,16 +12,13 @@ include_directories(include)
 
 set(SOURCES
     src/main.cpp
-	src/app.cpp
-	src/cheat_menu.cpp
-	src/console_window.cpp
-	src/console.cpp
-	src/demo_window.cpp
-	src/main_menubar.cpp
-	src/main_window.cpp
-	src/modal_window.cpp
-	src/statistics_window.cpp
-	src/window.cpp
+    src/model/GameLogic.cpp
+    src/model/Model.cpp
+    src/presenter/Presenter.cpp
+    src/view/GameWindow.cpp
+    src/view/SettingsWindow.cpp
+    src/view/View.cpp
+	src/view/ImGuiTheme.cpp
 )
 
 find_package(OpenGL REQUIRED)
@@ -38,4 +35,13 @@ add_executable(prog ${SOURCES})
 
 
 # Исполняемый файл с библиотекой ImGui
-target_link_libraries(prog imgui glfw ${OPENGL_LIBRARIES} SDL2::SDL2 SDL2_image::SDL2_image)
+target_link_libraries(prog 
+	imgui 
+	glfw 
+	${OPENGL_LIBRARIES} 
+	SDL2::SDL2 
+	SDL2_image::SDL2_image
+)
+
+# Копирование папки assets в директорию сборки
+file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR})
