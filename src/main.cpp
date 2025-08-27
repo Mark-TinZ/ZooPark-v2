@@ -46,7 +46,9 @@ int main() {
     GameLogic gameLogic;
     GameWindow gameWindow;
     SettingsWindow settingsWindow;
-    Presenter presenter(model, gameLogic, gameWindow, settingsWindow);
+	StoryWindow storyWindow;
+	AnimalWindow animalWindow;
+    Presenter presenter(model, gameLogic, gameWindow, settingsWindow, storyWindow, animalWindow);
 
     // Главный цикл
     while (!glfwWindowShouldClose(window)) {
@@ -65,6 +67,8 @@ int main() {
 
         gameWindow.render();
         settingsWindow.render();
+		storyWindow.render();
+		animalWindow.render();
 
         ImGui::Render();
         int display_w, display_h;

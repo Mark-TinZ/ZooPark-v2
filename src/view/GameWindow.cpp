@@ -10,13 +10,14 @@ void GameWindow::render() {
     // Главное меню
     if (ImGui::BeginMainMenuBar()) {
         if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("New Game")) {
-                // Обработчик в Presenter
+			if (ImGui::MenuItem("Загрузить игру", nullptr, false, false)) {}
+            if (ImGui::MenuItem("Создать игру")) {
+                newGameRequested = true;
             }
-            if (ImGui::MenuItem("Settings")) {
+            if (ImGui::MenuItem("Настройки")) {
                 showSettings = true;
             }
-            if (ImGui::MenuItem("Exit")) {
+            if (ImGui::MenuItem("Выход")) {
                 exitRequested = true;
             }
             ImGui::EndMenu();
@@ -51,4 +52,12 @@ bool GameWindow::isExitRequested() const {
 
 void GameWindow::setExitRequested(bool exit) {
 	exitRequested = exit;
+}
+
+bool GameWindow::isNewGameRequested() const {
+    return newGameRequested;
+}
+
+void GameWindow::setNewGameRequested(bool req) {
+    newGameRequested = req;
 }

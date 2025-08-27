@@ -14,9 +14,12 @@ set(SOURCES
     src/main.cpp
     src/model/GameLogic.cpp
     src/model/Model.cpp
+	src/model/Animal.cpp
     src/presenter/Presenter.cpp
     src/view/GameWindow.cpp
+	src/view/StoryWindow.cpp
     src/view/SettingsWindow.cpp
+	src/view/AnimalWindow.cpp
     src/view/View.cpp
 	src/view/ImGuiTheme.cpp
 )

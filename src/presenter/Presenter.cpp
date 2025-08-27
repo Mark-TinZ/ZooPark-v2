@@ -1,7 +1,7 @@
 #include "presenter/Presenter.h"
 
-Presenter::Presenter(Model& m, GameLogic& gl, GameWindow& gw, SettingsWindow& sw)
-    : model(m), gameLogic(gl), gameWindow(gw), settingsWindow(sw) {
+Presenter::Presenter(Model& m, GameLogic& gl, GameWindow& gw, SettingsWindow& sw, StoryWindow& stw, AnimalWindow& aw)
+    : model(m), gameLogic(gl), gameWindow(gw), settingsWindow(sw), storyWindow(stw), animalWindow(aw) {
     gameWindow.setGameStatus(gameLogic.getGameStatus());
     settingsWindow.setPlayerName(model.getPlayerName());
     settingsWindow.setVolume(model.getVolume());
@@ -10,6 +10,17 @@ Presenter::Presenter(Model& m, GameLogic& gl, GameWindow& gw, SettingsWindow& sw
 void Presenter::update() {
     gameWindow.setGameStatus(gameLogic.getGameStatus());
     settingsWindow.setVisible(gameWindow.isSettingsRequested());
+
+	if (storyWindow.isFinished()) {
+		// gameLogic.updateScore(1);
+		animalWindow.setVisible(true);
+		
+	}
+
+	if (gameWindow.isNewGameRequested()) {
+        storyWindow.setVisible(true);   // включаем показ истории
+        gameWindow.setNewGameRequested(false); // сбрасываем флаг
+    }
 }
 
 void Presenter::handleInput() {

@@ -13,11 +13,14 @@ public:
     bool isSettingsRequested() const;
 	bool isExitRequested() const;
 	void setExitRequested(bool exit);
+	bool isNewGameRequested() const;
+	void setNewGameRequested(bool req);
 
 private:
     std::string gameStatus;
     bool showSettings = false;
 	bool exitRequested = false;
+	bool newGameRequested = false;
 };
 
 #endif
