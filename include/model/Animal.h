@@ -1,5 +1,4 @@
 #pragma once
-
 #include <string>
 
 enum class DietType { Herbivore, Carnivore, Omnivore };

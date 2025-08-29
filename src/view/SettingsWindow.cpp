@@ -9,11 +9,15 @@ void SettingsWindow::render() {
     ImGui::Begin("Settings", &visible);
     char buffer[256];
     strncpy(buffer, playerNameInput.c_str(), sizeof(buffer));
+	buffer[sizeof(buffer)-1] = '\0';
     if (ImGui::InputText("Player Name", buffer, sizeof(buffer))) {
         playerNameInput = buffer;
     }
     ImGui::SliderFloat("Volume", &volumeInput, 0.0f, 1.0f);
     if (ImGui::Button("Apply")) {
+		// Флаг считывает Presenter; там же можно его сбросить
+        // (или сбрасывать тут после чтения, если перенесёшь туда логику)
+        // Для простоты оставим как есть.
         applyClicked = true;
     }
     ImGui::SameLine();
@@ -29,7 +33,6 @@ void SettingsWindow::render() {
     if (ImGui::BeginPopupModal("Confirm Reset", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
         ImGui::Text("Are you sure you want to reset all settings?");
         if (ImGui::Button("Yes")) {
-            resetClicked = true;
             ImGui::CloseCurrentPopup();
         }
         ImGui::SameLine();
@@ -41,30 +44,10 @@ void SettingsWindow::render() {
     }
 }
 
-void SettingsWindow::setPlayerName(const std::string& name) {
-    playerNameInput = name;
-}
-
-void SettingsWindow::setVolume(float volume) {
-    volumeInput = volume;
-}
-
-std::string SettingsWindow::getPlayerNameInput() const {
-    return playerNameInput;
-}
-
-float SettingsWindow::getVolumeInput() const {
-    return volumeInput;
-}
-
-bool SettingsWindow::isApplyClicked() const {
-    return applyClicked;
-}
-
-bool SettingsWindow::isResetClicked() const {
-    return resetClicked;
-}
-
-void SettingsWindow::setVisible(bool vis) {
-    visible = vis;
-}
+void SettingsWindow::setPlayerName(const std::string& name) { playerNameInput = name; }
+void SettingsWindow::setVolume(float volume) { volumeInput = volume; }
+std::string SettingsWindow::getPlayerNameInput() const { return playerNameInput; }
+float SettingsWindow::getVolumeInput() const { return volumeInput; }
+bool SettingsWindow::isApplyClicked() const { return applyClicked; }
+bool SettingsWindow::isResetClicked() const { return resetClicked; }
+void SettingsWindow::setVisible(bool vis) { visible = vis; }

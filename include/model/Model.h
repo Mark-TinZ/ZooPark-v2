@@ -1,6 +1,4 @@
-#ifndef MODEL_H
-#define MODEL_H
-
+#pragma once
 #include <string>
 
 class Model {
@@ -16,5 +14,3 @@ private:
     std::string playerName;
     float volume;
 };
-
-#endif

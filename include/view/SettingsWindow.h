@@ -1,6 +1,4 @@
-#ifndef SETTINGSWINDOW_H
-#define SETTINGSWINDOW_H
-
+#pragma once
 #include "view/View.h"
 #include <string>
 
@@ -23,5 +21,3 @@ private:
     bool resetClicked = false;
     bool visible = false;
 };
-
-#endif

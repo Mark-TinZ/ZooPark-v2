@@ -1,6 +1,4 @@
-#ifndef GAMELOGIC_H
-#define GAMELOGIC_H
-
+#pragma once
 #include <string>
 
 class GameLogic {
@@ -12,5 +10,3 @@ public:
 private:
     int score = 0;
 };
-
-#endif

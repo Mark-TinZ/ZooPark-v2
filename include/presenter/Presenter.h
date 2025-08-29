@@ -1,6 +1,4 @@
-#ifndef PRESENTER_H
-#define PRESENTER_H
-
+#pragma once
 #include <GLFW/glfw3.h>
 #include "imgui.h"
 #include "model/Model.h"
@@ -13,7 +11,7 @@
 class Presenter {
 public:
     Presenter(Model& model, GameLogic& gameLogic, 
-			GameWindow& gameWindow, SettingsWindow& settingsWindow, 
+			GameWindowUI& gameWindowUI, SettingsWindow& settingsWindow, 
 			StoryWindow& storyWindow, AnimalWindow& animalWondow);
     void update();
     void handleInput();
@@ -21,10 +19,8 @@ public:
 private:
     Model& model;
     GameLogic& gameLogic;
-    GameWindow& gameWindow;
+    GameWindowUI& gameWindowUI;
     SettingsWindow& settingsWindow;
 	StoryWindow& storyWindow;
 	AnimalWindow& animalWindow;
 };
-
-#endif

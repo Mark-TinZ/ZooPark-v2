@@ -14,36 +14,34 @@ set(SOURCES
     src/main.cpp
     src/model/GameLogic.cpp
     src/model/Model.cpp
-	src/model/Animal.cpp
+    src/model/Animal.cpp
     src/presenter/Presenter.cpp
+    src/presenter/MockPresenter.cpp
     src/view/GameWindow.cpp
-	src/view/StoryWindow.cpp
+    src/view/StoryWindow.cpp
     src/view/SettingsWindow.cpp
-	src/view/AnimalWindow.cpp
+    src/view/AnimalWindow.cpp
     src/view/View.cpp
-	src/view/ImGuiTheme.cpp
+    src/view/ImGuiTheme.cpp
 )
 
 find_package(OpenGL REQUIRED)
+find_package(glfw3 REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 
 message(STATUS "OpenGL Libraries: ${OPENGL_LIBRARIES}")
 
-
-
 # Исполняемый файл
 add_executable(prog ${SOURCES})
 
-
-
 # Исполняемый файл с библиотекой ImGui
 target_link_libraries(prog 
-	imgui 
-	glfw 
-	${OPENGL_LIBRARIES} 
-	SDL2::SDL2 
-	SDL2_image::SDL2_image
+    imgui 
+    glfw
+    ${OPENGL_LIBRARIES} 
+    SDL2::SDL2 
+    SDL2_image::SDL2_image
 )
 
 # Копирование папки assets в директорию сборки

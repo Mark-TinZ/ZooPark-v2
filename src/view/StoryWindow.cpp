@@ -82,9 +82,9 @@ void StoryWindow::setVisible(bool vis) {
 }
 
 bool StoryWindow::isVisible() const {
-	return false;
+	return visible;
 }
 
 bool StoryWindow::isFinished() const {
-	return visible;
+	return finished;
 }

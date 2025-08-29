@@ -1,5 +1,4 @@
 #pragma once
-
 #include "view/View.h"
 #include "model/Animal.h"
 #include <vector>

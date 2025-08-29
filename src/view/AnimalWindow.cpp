@@ -1,6 +1,7 @@
 #include "view/AnimalWindow.h"
 #include "model/Animal.h"
 #include "imgui.h"
+#include <cstdio>
 
 AnimalWindow::AnimalWindow()
 	: visible(false), createModalOpen(false),
