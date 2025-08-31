@@ -8,20 +8,41 @@
 // --------------------------- Construction ---------------------------
 GameWindowUI::GameWindowUI()
 {
-	new_game_params_.name = "New Player";
+	new_game_params_.name = "New World";
 	new_game_params_.difficulty = 1;
 	new_game_params_.map_size = 64;
-	std::strncpy(new_game_name_buf_, new_game_params_.name.c_str(), sizeof(new_game_name_buf_));
-	new_game_name_buf_[sizeof(new_game_name_buf_)-1] = '\0';
+	std::strncpy(new_world_name_buf_, new_game_params_.name.c_str(), sizeof(new_world_name_buf_));
+	new_world_name_buf_[sizeof(new_world_name_buf_)-1] = '\0';
 }
 
 GameWindowUI::~GameWindowUI() = default;
 
 // --------------------------- Public modals control ---------------------------
-void GameWindowUI::OpenModal_NewGame() { show_newgame_modal_ = true; ImGui::OpenPopup("New Game"); }
-void GameWindowUI::OpenModal_Load()    { show_load_modal_ = true; ImGui::OpenPopup("Load Game"); }
-void GameWindowUI::OpenModal_Settings(){ show_settings_modal_ = true; ImGui::OpenPopup("Settings"); }
-void GameWindowUI::OpenModal_QuitConfirm() { show_quit_modal_ = true; ImGui::OpenPopup("Quit?"); }
+void GameWindowUI::RequestModal(ModalType type) { pedding_modal_ = type; }
+void GameWindowUI::ProcessPeddingModals() {
+	switch (pedding_modal_)
+	{
+	case ModalType::NewGame:
+		show_newgame_modal_ = true;
+		ImGui::OpenPopup("New Game");
+		break;
+	case ModalType::LoadGame:
+		show_load_modal_ = true;
+		ImGui::OpenPopup("Load Game");
+		break;
+	case ModalType::Settings:
+		show_settings_modal_ = true; 
+		ImGui::OpenPopup("Settings");
+		break;
+	case ModalType::QuitConfirm:
+		show_quit_modal_ = true; 
+		ImGui::OpenPopup("Quit?");
+		break;
+	default:
+		break;
+	}
+	pedding_modal_ = ModalType::None;
+}
 void GameWindowUI::CloseAllModals()
 {
 	show_newgame_modal_ = show_load_modal_ = show_settings_modal_ = show_quit_modal_ = false;
@@ -31,44 +52,46 @@ void GameWindowUI::CloseAllModals()
 // --------------------------- Main render entry ---------------------------
 void GameWindowUI::Render()
 {
-	// Fullscreen main window (background docking etc.)
+	DrawMainMenuBar(); // Отображение menubar
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	float menu_h = ImGui::GetFrameHeight();
 	if (first_frame_setup_) {
-		// place window exactly over viewport for "fullscreen GUI"
-		ImGui::SetNextWindowPos(viewport->Pos);
-		ImGui::SetNextWindowSize(viewport->Size);
+		ImVec2 pos = viewport->Pos;
+		ImVec2 size = viewport->Size;
+		pos.y += menu_h;
+		size.y -= menu_h;
+
+		ImGui::SetNextWindowPos(pos);
+		ImGui::SetNextWindowSize(size);
 		ImGui::SetNextWindowViewport(viewport->ID);
 		first_frame_setup_ = false;
 	} else {
-		ImGui::SetNextWindowPos(viewport->Pos);
-		ImGui::SetNextWindowSize(viewport->Size);
+		ImVec2 pos = viewport->Pos;
+		ImVec2 size = viewport->Size;
+		pos.y += menu_h;
+		size.y -= menu_h;
+
+		ImGui::SetNextWindowPos(pos);
+		ImGui::SetNextWindowSize(size);
 		ImGui::SetNextWindowViewport(viewport->ID);
 	}
 
 	// Window flags to act as main full-screen canvas
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize |
-							 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-							 ImGuiWindowFlags_MenuBar;
+							 ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse; //| ImGuiWindowFlags_MenuBar;
+
 
 	ImGui::Begin("MainGameWindow", nullptr, flags);
 
-	DrawMainMenuBar(); // Ебань тупая с флагами 
 
 	// Layout: left info / center gameplay preview / right actions
-	ImGui::BeginChild("MainLeft", ImVec2(240, 0), true);
+	ImGui::BeginChild("MainLeft", ImVec2(240, -1), true);
 	ImGui::TextWrapped("Game");
 	ImGui::Separator();
-	if (ImGui::Button("New Game", ImVec2(-1, 0))) OpenModal_NewGame();
-	if (ImGui::Button("Load Game", ImVec2(-1, 0))) OpenModal_Load();
-	if (ImGui::Button("Settings", ImVec2(-1, 0))) OpenModal_Settings();
-	if (ImGui::Button("Quit", ImVec2(-1, 0))) OpenModal_QuitConfirm();
-
-	// Draw popups / modals
-	DrawNewGameModal();
-	DrawSavesLoadModal();
-	DrawSettingsModal();
-	DrawQuitConfirmModal();
-	DrawErrorModalIfNeeded();
+	if (ImGui::Button("New Game", ImVec2(-1, 0))) RequestModal(ModalType::NewGame);
+	if (ImGui::Button("Load Game", ImVec2(-1, 0))) RequestModal(ModalType::LoadGame);
+	if (ImGui::Button("Settings", ImVec2(-1, 0))) RequestModal(ModalType::Settings);
+	if (ImGui::Button("Quit", ImVec2(-1, 0))) RequestModal(ModalType::QuitConfirm);
 	ImGui::EndChild();
 
 	ImGui::SameLine();
@@ -100,7 +123,14 @@ void GameWindowUI::Render()
 
 	ImGui::End(); // MainGameWindow
 
-	
+	ProcessPeddingModals();
+
+	// Draw popups / modals
+	DrawNewGameModal();
+	DrawSavesLoadModal();
+	DrawSettingsModal();
+	DrawQuitConfirmModal();
+	DrawErrorModalIfNeeded();
 
 	// Note: UI should not directly do expensive IO; call presenter which may perform async I/O.
 	// Example async pattern (comment): launch std::async in presenter to ListSaves() and when done copy
@@ -110,19 +140,19 @@ void GameWindowUI::Render()
 // --------------------------- Menu bar ---------------------------
 void GameWindowUI::DrawMainMenuBar()
 {
-	if (ImGui::BeginMenuBar()) { // Было: BeginMainMenuBar
+	if (ImGui::BeginMainMenuBar()) { // Было: BeginMainMenuBar
 		if (ImGui::BeginMenu("File")) {
-			if (ImGui::MenuItem("New Game")) OpenModal_NewGame();
-			if (ImGui::MenuItem("Load Game")) OpenModal_Load();
-			if (ImGui::MenuItem("Settings")) OpenModal_Settings();
-			if (ImGui::MenuItem("Quit")) OpenModal_QuitConfirm();
+			if (ImGui::MenuItem("New Game")) RequestModal(ModalType::NewGame);
+			if (ImGui::MenuItem("Load Game")) RequestModal(ModalType::LoadGame);
+			if (ImGui::MenuItem("Settings")) RequestModal(ModalType::Settings);
+			if (ImGui::MenuItem("Quit")) RequestModal(ModalType::QuitConfirm);
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Help")) {
 			ImGui::MenuItem("About");
 			ImGui::EndMenu();
 		}
-		ImGui::EndMenuBar(); // Было: EndMainMenuBar
+		ImGui::EndMainMenuBar(); // Было: EndMainMenuBar
 	}
 }
 
@@ -136,8 +166,8 @@ void GameWindowUI::DrawNewGameModal()
 		ImGui::Text("Create a new game");
 		ImGui::Separator();
 
-		ImGui::InputText("Player Name", new_game_name_buf_, IM_ARRAYSIZE(new_game_name_buf_));
-		new_game_params_.name = std::string(new_game_name_buf_);
+		ImGui::InputText("World Name", new_world_name_buf_, IM_ARRAYSIZE(new_world_name_buf_));
+		new_game_params_.name = std::string(new_world_name_buf_);
 
 		ImGui::SliderInt("Difficulty", &new_game_params_.difficulty, 0, 5);
 		ImGui::InputInt("Map Size", &new_game_params_.map_size);

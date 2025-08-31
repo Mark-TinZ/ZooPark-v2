@@ -58,17 +58,29 @@ public:
 	void SetPresenter(IGamePresenter* presenter) { presenter_ = presenter; }
 
 	// Convenience API to open/close particular modal windows
-	void OpenModal_NewGame();
-	void OpenModal_Load();
-	void OpenModal_Settings();
-	void OpenModal_QuitConfirm();
 	void CloseAllModals();
 
 	// State setters/getters (optional)
 	void SetFullscreenByDefault(bool fs) { fullscreen_by_default_ = fs; }
 
 private:
-	// internal helpers for drawing modal contents
+	// Модальные окна
+	enum class ModalType {
+		None,
+		NewGame,
+		LoadGame,
+		Settings,
+		QuitConfirm
+	};
+
+	// Используется для хранение запроса
+	ModalType pedding_modal_ = ModalType::None;
+
+	void RequestModal(ModalType type); // Создания запроса на вызов модального окна
+	void ProcessPeddingModals(); // Вызов модальных окан
+
+
+	// Функции отрисовки
 	void DrawMainMenuBar();
 	void DrawPlayPanel();
 	void DrawSavesLoadModal();
@@ -77,10 +89,10 @@ private:
 	void DrawQuitConfirmModal();
 	void DrawErrorModalIfNeeded();
 
-	// Presenter pointer (UI-only)
+	// Указатель на показ (UI)
 	IGamePresenter* presenter_ = nullptr;
 
-	// UI state:
+	// UI состояние:
 	bool fullscreen_by_default_ = true;
 	bool show_load_modal_ = false;
 	bool show_newgame_modal_ = false;
@@ -94,7 +106,7 @@ private:
 
 	// New game form state
 	NewGameParams new_game_params_;
-	char new_game_name_buf_[128];
+	char new_world_name_buf_[128];
 
 	// Settings
 	Settings settings_ui_; // editable copy
